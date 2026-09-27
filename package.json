@@ -1,6 +1,6 @@
 {
   "name": "@arikchakma/mac-remote",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Control your Mac's media from your phone over Wi-Fi: play/pause, seek, volume and fullscreen.",
   "repository": "github:arikchakma/mac-remote",
   "license": "MIT",
