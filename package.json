@@ -21,11 +21,13 @@
     "start": "bun src/cli.ts",
     "build": "rm -rf dist && bun build src/cli.ts --target=node --minify --outfile=dist/cli.js && bun run build:keys",
     "build:keys": "swiftc -O -target arm64-apple-macos12 src/keys.swift -o dist/keys-arm64 && swiftc -O -target x86_64-apple-macos12 src/keys.swift -o dist/keys-x64 && lipo -create dist/keys-arm64 dist/keys-x64 -output dist/keys && rm dist/keys-arm64 dist/keys-x64",
-    "prepublishOnly": "bun run build"
+    "prepublishOnly": "bun run build",
+    "release": "bumpp"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/qrcode": "^1.5.6",
+    "bumpp": "^12.3.0",
     "qrcode": "^1.5.4"
   },
   "peerDependencies": {
