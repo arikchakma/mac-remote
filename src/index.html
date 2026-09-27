@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b0b0f">
+<title>Mac Remote</title>
+<meta name="apple-mobile-web-app-title" content="Mac Remote">
+<style>
+  :root { --bg: #0b0b0f; --btn: #17171d; --btn-hi: #23232b; --fg: #f2f2f5; --dim: #8a8a96; --accent: #ff5a36; }
+  * { box-sizing: border-box; margin: 0; -webkit-tap-highlight-color: transparent; }
+  html { background: var(--bg); }
+  body {
+    min-height: 100vh; min-height: 100dvh;
+    background: var(--bg) radial-gradient(120% 80% at 50% 0%, #1a1a22 0%, var(--bg) 60%) no-repeat;
+    color: var(--fg); font: 500 15px -apple-system, system-ui, sans-serif;
+    display: grid; justify-items: center; user-select: none; -webkit-user-select: none;
+    padding: calc(env(safe-area-inset-top) + 24px) 16px calc(env(safe-area-inset-bottom) + 32px); touch-action: manipulation;
+  }
+  main { width: 100%; max-width: 360px; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; }
+  .group { display: grid; gap: 28px; }
+  header { display: grid; gap: 4px; justify-items: center; text-align: center; }
+  #computer { font-size: 15px; font-weight: 600; }
+  #conn { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--dim); }
+  #conn::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--dim); }
+  #conn.ok::before { background: #3ddc84; }
+  #conn.err { color: var(--accent); }
+  #conn.err::before { background: var(--accent); }
+  .now { display: grid; gap: 2px; justify-items: center; text-align: center; padding: 14px 16px; border-radius: 20px; background: var(--btn); }
+  #title { max-width: 100%; font-size: 17px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #app { font-size: 13px; color: var(--dim); }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  button {
+    border: 0; background: var(--btn); color: var(--fg); border-radius: 50%;
+    width: 76px; height: 76px; display: grid; place-items: center; cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 8px 24px rgba(0,0,0,.4);
+    transition: transform .08s, background .15s;
+  }
+  button:active, button.on { transform: scale(.93); background: var(--btn-hi); }
+  button svg { width: 28px; height: 28px; fill: currentColor; }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  #play { width: 128px; height: 128px; background: var(--accent); box-shadow: 0 12px 40px rgba(255,90,54,.35); }
+  #play:active { background: #e44a28; }
+  #play svg { width: 48px; height: 48px; }
+  .small { width: 60px; height: 60px; }
+  .small svg { width: 22px; height: 22px; }
+  #mute svg { width: 24px; height: 24px; }
+  #mute.active { background: var(--fg); color: var(--bg); }
+  .pill { flex: 1; border-radius: 38px; }
+  .label { font-size: 11px; color: var(--dim); margin-top: -4px; }
+  .seek { display: grid; gap: 2px; place-items: center; }
+  .seek span { font-size: 11px; color: var(--dim); }
+</style>
+</head>
+<body>
+<main>
+  <div class="group">
+  <header>
+    <p id="computer">Mac Remote</p>
+    <p id="conn">Connecting…</p>
+  </header>
+
+  <section class="now" aria-live="polite">
+    <span id="title">Nothing playing</span>
+    <span id="app">Open a video on your Mac</span>
+  </section>
+  </div>
+
+  <div class="group">
+
+  <div class="row">
+    <button data-a="prev" class="small" aria-label="Previous track"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+    <button data-a="full" class="small" aria-label="Toggle fullscreen"><svg viewBox="0 0 24 24"><path d="M4 4h6v2H6v4H4zm10 0h6v6h-2V6h-4zM4 14h2v4h4v2H4zm14 0h2v6h-6v-2h4z"/></svg></button>
+    <button data-a="next" class="small" aria-label="Next track"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+  </div>
+
+  <div class="row">
+    <button data-a="back" data-repeat aria-label="Seek back"><svg viewBox="0 0 24 24"><path d="M11 6v12L2.5 12zm9.5 0v12L12 12z"/></svg></button>
+    <button id="play" data-a="play" aria-label="Play or pause"><svg viewBox="0 0 24 24"><path d="M7 4v16l7-8zM15 4h2.5v16H15zm4 0h2.5v16H19z" transform="translate(-2 0)"/></svg></button>
+    <button data-a="fwd" data-repeat aria-label="Seek forward"><svg viewBox="0 0 24 24"><path d="M13 6v12l8.5-6zM3.5 6v12L12 12z"/></svg></button>
+  </div>
+
+  <div class="row">
+    <button data-a="voldown" data-repeat class="pill" aria-label="Volume down"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9zm11 2h7v2h-7z"/></svg></button>
+    <button id="mute" data-a="mute" class="small" aria-label="Mute" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9z"/><path d="m15 9 6 6m0-6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+    <button data-a="volup" data-repeat class="pill" aria-label="Volume up"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9zm11 2h3V8h2v3h3v2h-3v3h-2v-3h-3z"/></svg></button>
+  </div>
+  </div>
+</main>
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  function setConn(ok) {
+    $('conn').textContent = ok ? 'Connected' : 'Can’t reach your Mac';
+    $('conn').className = ok ? 'ok' : 'err';
+  }
+
+  // Shows the Mac's name, the connection state, and the app the buttons control.
+  async function refresh() {
+    try {
+      const s = await (await fetch('/status')).json();
+      $('computer').textContent = s.computer;
+      $('title').textContent = s.title || s.app || 'Nothing playing';
+      $('app').textContent = s.app ? (s.title ? s.app : 'No window open') : 'Open a video on your Mac';
+      $('mute').classList.toggle('active', s.muted);
+      $('mute').setAttribute('aria-pressed', s.muted);
+      setConn(true);
+    } catch {
+      setConn(false);
+    }
+  }
+  refresh();
+  setInterval(() => document.visibilityState === 'visible' && refresh(), 3000);
+  document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && refresh());
+
+  async function send(action) {
+    navigator.vibrate?.(10);
+    try {
+      const r = await fetch('/' + action, { method: 'POST' });
+      if (!r.ok) throw new Error(r.status);
+      setConn(true);
+      if (action === 'mute') setTimeout(refresh, 150);
+    } catch {
+      setConn(false);
+    }
+  }
+
+  // Tap sends once; holding a [data-repeat] button keeps sending.
+  for (const b of document.querySelectorAll('button')) {
+    let timer;
+    const stop = () => { clearTimeout(timer); b.classList.remove('on'); };
+    b.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      b.classList.add('on');
+      send(b.dataset.a);
+      if (!('repeat' in b.dataset)) return;
+      const tick = () => { send(b.dataset.a); timer = setTimeout(tick, 150); };
+      timer = setTimeout(tick, 400);
+    });
+    b.addEventListener('pointerup', stop);
+    b.addEventListener('pointerleave', stop);
+    b.addEventListener('pointercancel', stop);
+    b.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); send(b.dataset.a); } });
+  }
+</script>
+</body>
+</html>

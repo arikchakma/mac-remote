@@ -1,0 +1,33 @@
+{
+  "name": "@arikchakma/mac-remote",
+  "version": "0.1.0",
+  "description": "Control your Mac's media from your phone over Wi-Fi: play/pause, seek, volume and fullscreen.",
+  "repository": "github:arikchakma/mac-remote",
+  "type": "module",
+  "bin": {
+    "mac-remote": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "os": [
+    "darwin"
+  ],
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "start": "bun src/cli.ts",
+    "build": "rm -rf dist && bun build src/cli.ts --target=node --minify --outfile=dist/cli.js && bun run build:keys",
+    "build:keys": "swiftc -O -target arm64-apple-macos12 src/keys.swift -o dist/keys-arm64 && swiftc -O -target x86_64-apple-macos12 src/keys.swift -o dist/keys-x64 && lipo -create dist/keys-arm64 dist/keys-x64 -output dist/keys && rm dist/keys-arm64 dist/keys-x64",
+    "prepublishOnly": "bun run build"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/qrcode": "^1.5.6",
+    "qrcode": "^1.5.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
